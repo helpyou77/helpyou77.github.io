@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Сайт Бычкова Тимофея, ИС-3.2</h1>
+
+    <a href="1.html">работа 1</a>
+    <a href="2.html">работа 2</a>
+    <a href="3.html">работа 3</a>
+    <a href="4.html">работа 4</a>
+    <a href="5.html">работа 5</a>
+    <a href="6.html">работа 6</a>
+</body>
+</html>
