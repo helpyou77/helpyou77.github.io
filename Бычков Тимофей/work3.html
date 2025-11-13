@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Угадай число</title>
+    <link rel="stylesheet" href="work3.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Угадай число</h1>
+            <p>Попробуйте угадать число от 1 до 100</p>
+        </header>
+        
+        <main class="game-container">
+            <div class="game-info">
+                <div class="info-item">
+                    <div class="info-label">Попытки</div>
+                    <div class="info-value" id="attempts-count">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Осталось</div>
+                    <div class="info-value" id="remaining-attempts">20</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Диапазон</div>
+                    <div class="info-value">1-100</div>
+                </div>
+            </div>
+            
+            <div class="message info" id="welcome-message">
+                Добро пожаловать в игру! Введите число от 1 до 100 и нажмите "Проверить".
+            </div>
+            
+            <div class="message success" id="success-message">
+                Поздравляем! Вы угадали число!
+            </div>
+            
+            <div class="message error" id="error-message">
+                К сожалению, попытки закончились. Загаданное число: <span id="secret-number"></span>
+            </div>
+            
+            <div class="input-group">
+                <label for="guess">Ваше предположение:</label>
+                <input type="number" id="guess" class="guess-input" min="1" max="100" placeholder="Введите число">
+            </div>
+            
+            <button class="btn" id="check-btn">Проверить</button>
+            <button class="btn btn-restart" id="restart-btn">Новая игра</button>
+            
+            <div class="attempts-history">
+                <h3>История попыток:</h3>
+                <ul class="attempts-list" id="attempts-list">
+                    
+                </ul>
+            </div>
+            
+            <div class="hint">
+                <strong>Подсказка:</strong> После каждой попытки вы получите подсказку, больше или меньше загаданное число.
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Элементы DOM
+            const guessInput = document.getElementById('guess');
+            const checkBtn = document.getElementById('check-btn');
+            const restartBtn = document.getElementById('restart-btn');
+            const attemptsCount = document.getElementById('attempts-count');
+            const remainingAttempts = document.getElementById('remaining-attempts');
+            const attemptsList = document.getElementById('attempts-list');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            const secretNumberSpan = document.getElementById('secret-number');
+            
+            // Игровые переменные
+            let secretNumber;
+            let attempts;
+            let maxAttempts = 20;
+            let gameOver;
+            
+            // Инициализация игры
+            function initGame() {
+                secretNumber = Math.floor(Math.random() * 100) + 1;
+                attempts = 0;
+                gameOver = false;
+                
+                // Сброс интерфейса
+                attemptsCount.textContent = attempts;
+                remainingAttempts.textContent = maxAttempts - attempts;
+                attemptsList.innerHTML = '';
+                guessInput.value = '';
+                guessInput.disabled = false;
+                checkBtn.disabled = false;
+                
+                // Скрыть сообщения
+                welcomeMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
+                
+                console.log('Загаданное число:', secretNumber); // Для отладки
+            }
+            
+            // Проверка предположения
+            function checkGuess() {
+                if (gameOver) return;
+                
+                const userGuess = parseInt(guessInput.value);
+                
+                // Проверка валидности ввода
+                if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+                    alert('Пожалуйста, введите число от 1 до 100!');
+                    guessInput.value = '';
+                    guessInput.focus();
+                    return;
+                }
+                
+                attempts++;
+                attemptsCount.textContent = attempts;
+                remainingAttempts.textContent = maxAttempts - attempts;
+                
+                // Создание элемента истории
+                const attemptItem = document.createElement('li');
+                attemptItem.className = 'attempt-item';
+                
+                const attemptNumber = document.createElement('span');
+                attemptNumber.className = 'attempt-number';
+                attemptNumber.textContent = `Попытка ${attempts}: ${userGuess}`;
+                
+                const attemptFeedback = document.createElement('span');
+                
+                // Проверка результата
+                if (userGuess === secretNumber) {
+                    // Угадали!
+                    attemptFeedback.className = 'attempt-feedback attempt-correct';
+                    attemptFeedback.textContent = 'Правильно!';
+                    attemptItem.appendChild(attemptNumber);
+                    attemptItem.appendChild(attemptFeedback);
+                    attemptsList.prepend(attemptItem);
+                    
+                    endGame(true);
+                    return;
+                } else if (userGuess < secretNumber) {
+                    attemptFeedback.className = 'attempt-feedback';
+                    attemptFeedback.textContent = 'Слишком мало';
+                } else {
+                    attemptFeedback.className = 'attempt-feedback';
+                    attemptFeedback.textContent = 'Слишком много';
+                }
+                
+                attemptItem.appendChild(attemptNumber);
+                attemptItem.appendChild(attemptFeedback);
+                attemptsList.prepend(attemptItem);
+                
+                // Проверка окончания попыток
+                if (attempts >= maxAttempts) {
+                    endGame(false);
+                    return;
+                }
+                
+                // Очистка поля ввода и фокус
+                guessInput.value = '';
+                guessInput.focus();
+            }
+            
+            // Завершение игры
+            function endGame(isWin) {
+                gameOver = true;
+                guessInput.disabled = true;
+                checkBtn.disabled = true;
+                
+                if (isWin) {
+                    welcomeMessage.style.display = 'none';
+                    successMessage.style.display = 'block';
+                } else {
+                    welcomeMessage.style.display = 'none';
+                    secretNumberSpan.textContent = secretNumber;
+                    errorMessage.style.display = 'block';
+                }
+            }
+            
+            // Обработчики событий
+            checkBtn.addEventListener('click', checkGuess);
+            
+            restartBtn.addEventListener('click', initGame);
+            
+            guessInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkGuess();
+                }
+            });
+            
+            // Начало игры
+            initGame();
+        });
+    </script>
+</body>
+</html>

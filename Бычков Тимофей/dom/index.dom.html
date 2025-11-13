@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Случайные сообщения</title>
+    <link rel="stylesheet" href="dom.css">
+
+</head>
+<body>
+    <div class="container">
+        <h2>Нажми на кнопку!</h2>
+        <button onclick="showRandomMessage()">Press me</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        function showRandomMessage() {
+            const messages = [
+                "Летсгиридрапчик",
+                "Привет!",
+                "И встретить некому, мы звоним нашему спец.агенту",
+                "Сегодня-завтра будет вчера",
+            ];
+            
+            const randomIndex = Math.floor(Math.random() * messages.length);
+            const randomMessage = messages[randomIndex];
+            
+            document.getElementById('message').textContent = randomMessage;
+        }
+    </script>
+</body>
+</html>
